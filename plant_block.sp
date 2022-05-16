@@ -1,6 +1,7 @@
 #include <sourcemod>
 #include <sdktools>
 #include <csgo_colors>
+#include <multicolors>
 
 #pragma tabsize 0
 
@@ -16,15 +17,15 @@ char Tag[5][] =
 	"{DEFAULT}[{RED}========{DEFAULT}___] ",
 	"{DEFAULT}[{RED}=========={DEFAULT}] "
 }
+char Tagx[5][] = 
+{	
+	"[==____________] ",
+	"[====_________] ",
+	"[======______] ",
+	"[========___] ",
+	"[==========] "
+}
 int randomText;
-/* char TagColor[13][] = 
-{
-	"{DEFAULT}",
-	"{RED}","{LIGHTPURPLE}","{GREEN}",
-	"{LIME}","{LIGHTGREEN}","{LIGHTRED}",
-	"{GRAY}","{LIGHTOLIVE}","{OLIVE}",
-	"{PURPLE}","{LIGHTBLUE}","{BLUE}"
-} */
 
 char InformationText[][] = 
 {
@@ -83,21 +84,56 @@ public Action TimerCountDown(Handle hTimer, i)
 	char buffer[256];
 	if(randomText == 0)
 	{
-		Format(buffer, sizeof(buffer), "%s{OLIVE}%s",Tag[i],InformationText[i])
+		if(GetEngineVersion()==Engine_CSGO || GetEngineVersion()==Engine_CSS)
+		{
+			Format(buffer, sizeof(buffer), "%s{OLIVE} %s",Tag[i],InformationText[i])
+		}
+		else
+		{
+			Format(buffer, sizeof(buffer), "%s %s",Tagx[i],InformationText3[i])
+		}
 	}
 	else if (randomText == 1)
 	{
-		Format(buffer, sizeof(buffer), "%s{OLIVE}%s",Tag[i],InformationText2[i])
+		if(GetEngineVersion()==Engine_CSGO || GetEngineVersion()==Engine_CSS)
+		{
+			Format(buffer, sizeof(buffer), "%s{OLIVE} %s",Tag[i],InformationText2[i])
+		}
+		else
+		{
+			Format(buffer, sizeof(buffer), "%s %s",Tagx[i],InformationText3[i])
+		}
 	}
 	else if (randomText == 2)
 	{
-		Format(buffer, sizeof(buffer), "%s{OLIVE}%s",Tag[i],InformationText3[i])
+		if(GetEngineVersion()==Engine_CSGO || GetEngineVersion()==Engine_CSS)
+		{
+			Format(buffer, sizeof(buffer), "%s{OLIVE} %s",Tag[i],InformationText3[i])
+		}
+		else
+		{
+			Format(buffer, sizeof(buffer), "%s %s",Tagx[i],InformationText3[i])
+		}
 	}
 	for (int j = 0;j<MaxClients;j++)
 	{
 		if(!IsFakeClient(iClient) && IsClientInGame(iClient))
 		{
-			if(IsPlayerAlive(iClient)) CGOPrintToChat(iClient,buffer);
+			if(IsPlayerAlive(iClient)) 
+			{
+				if(GetEngineVersion()==Engine_CSGO)
+				{
+					CGOPrintToChat(iClient,buffer);
+				}
+				if else (GetEngineVersion()==Engine_CSS)
+				{
+					CPrintToChat(iClient,buffer);
+				}
+				else 
+				{
+					PrintToChat(iClient,buffer);
+				}
+			}
 		}	
 	}
 	
@@ -110,13 +146,21 @@ public Action TimerCallback(Handle timer, Handle hndl)
 	char buffer[256];
 	if(BLOCKPLANT == 1) 
 	{
-		Format(buffer, sizeof(buffer), "{PURPLE}➠{DEFAULT} Плент {RED}%s {DEFAULT}заблокирован! Доступный плент{GREEN} %s",plant[1],plant[0]);
+		if(GetEngineVersion()==Engine_CSGO || GetEngineVersion()==Engine_CSS)
+		{
+			Format(buffer, sizeof(buffer), "{PURPLE}➠{DEFAULT} Плент {RED}%s {DEFAULT}заблокирован! Доступный плент{GREEN} %s",plant[1],plant[0]);
+		}
+		else Format(buffer, sizeof(buffer), "➠ Плент %s заблокирован! Доступный плент %s",plant[1],plant[0]);
 		current_plant = 1;
 	}
 	
 	else 
 	{
-		Format(buffer, sizeof(buffer), "{PURPLE}➠{DEFAULT} Плент {RED}%s {DEFAULT}заблокирован! Доступный плент{GREEN} %s",plant[0],plant[1]);
+		if(GetEngineVersion()==Engine_CSGO || GetEngineVersion()==Engine_CSS)
+		{
+			Format(buffer, sizeof(buffer), "{PURPLE}➠{DEFAULT} Плент {RED}%s {DEFAULT}заблокирован! Доступный плент{GREEN} %s",plant[0],plant[1]);
+		}
+		else Format(buffer, sizeof(buffer), "➠ Плент %s заблокирован! Доступный плент %s",plant[1],plant[0]);
 		current_plant = 2;
 	}
 	
@@ -124,7 +168,21 @@ public Action TimerCallback(Handle timer, Handle hndl)
 	{
 		if(!IsFakeClient(iClient) && IsClientInGame(iClient))
 		{
-			if(IsPlayerAlive(iClient)) CGOPrintToChat(iClient,buffer);
+			if(IsPlayerAlive(iClient))
+			{
+				if(GetEngineVersion()==Engine_CSGO)
+				{
+					CGOPrintToChat(iClient,buffer);
+				}
+				if else (GetEngineVersion()==Engine_CSS)
+				{
+					CPrintToChat(iClient,buffer);
+				}
+				else 
+				{
+					PrintToChat(iClient,buffer);
+				}
+			}
 		}	
 	}
 }
@@ -163,8 +221,21 @@ public Action OnPlayerRunCmd(int iClient, int& buttons, int& impulse, float vel[
                     {
                         if(DistanceToPlants(iClient) == BLOCKPLANT)
                         {
-							if(BLOCKPLANT == 1) CGOPrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {GREEN}%s",plant[0]);
-							else CGOPrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {GREEN}%s",plant[1]);
+							if(GetEngineVersion()==Engine_CSGO)
+							{
+								if(BLOCKPLANT == 1) CGOPrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {GREEN}%s",plant[0]);
+								else CGOPrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {GREEN}%s",plant[1]);
+							}
+							else if (GetEngineVersion()==Engine_CSS)
+							{
+								if(BLOCKPLANT == 1) CPrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {GREEN}%s",plant[0]);
+								else CPrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {GREEN}%s",plant[1]);
+							}
+							else 
+							{
+								if(BLOCKPLANT == 1) PrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА %s",plant[0]);
+								else PrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА %s",plant[1]);
+							}
                             if (buttons & IN_ATTACK && buttons & IN_USE)
                             {
                                 buttons &= ~IN_ATTACK;
