@@ -11,14 +11,6 @@ int current_plant;
 char plant[2][] = {"A","B"};
 char Tag[5][] = 
 {	
-	"{DEFAULT}[{RED}=={DEFAULT}____________] ",
-	"{DEFAULT}[{RED}===={DEFAULT}_________] ",
-	"{DEFAULT}[{RED}======{DEFAULT}______] ",
-	"{DEFAULT}[{RED}========{DEFAULT}___] ",
-	"{DEFAULT}[{RED}=========={DEFAULT}] "
-}
-char Tagx[5][] = 
-{	
 	"[==____________] ",
 	"[====_________] ",
 	"[======______] ",
@@ -47,6 +39,7 @@ int BLOCKPLANT;
 public void OnPluginStart()
 {
 	HookEvent("round_start", EventRoundStart);
+	LoadTranslations("plant_blocker_random.phrases.txt");
 }
 
 public void EventRoundStart(Event hEvent, const char[] sEvName, bool bDontBroadcast)
@@ -71,8 +64,10 @@ public void EventRoundStart(Event hEvent, const char[] sEvName, bool bDontBroadc
 		{
 			if(IsPlayerAlive(i))
 			{
+				char buffer[256];
+				Format(buffer,sizeof(buffer),"%t","searching")
 				SetHudTextParams(0.45, 1.0, 1.0, 0 , 255, 0, 0, 2, 0.0 , 0.0, 0.0);
-				ShowHudText(i, -1, "SEARCHING THE PLANT...");
+				ShowHudText(i, -1, buffer);
 			}
 		}	
 	}
@@ -84,36 +79,15 @@ public Action TimerCountDown(Handle hTimer, i)
 	char buffer[256];
 	if(randomText == 0)
 	{
-		if(GetEngineVersion()==Engine_CSGO || GetEngineVersion()==Engine_CSS)
-		{
-			Format(buffer, sizeof(buffer), "%s{OLIVE} %s",Tag[i],InformationText[i])
-		}
-		else
-		{
-			Format(buffer, sizeof(buffer), "%s %s",Tagx[i],InformationText3[i])
-		}
+		Format(buffer, sizeof(buffer), "%t","TimerCountDown",Tag[i],InformationText[i])
 	}
 	else if (randomText == 1)
 	{
-		if(GetEngineVersion()==Engine_CSGO || GetEngineVersion()==Engine_CSS)
-		{
-			Format(buffer, sizeof(buffer), "%s{OLIVE} %s",Tag[i],InformationText2[i])
-		}
-		else
-		{
-			Format(buffer, sizeof(buffer), "%s %s",Tagx[i],InformationText3[i])
-		}
+		Format(buffer, sizeof(buffer), "%t","TimerCountDown",Tag[i],InformationText2[i])
 	}
 	else if (randomText == 2)
 	{
-		if(GetEngineVersion()==Engine_CSGO || GetEngineVersion()==Engine_CSS)
-		{
-			Format(buffer, sizeof(buffer), "%s{OLIVE} %s",Tag[i],InformationText3[i])
-		}
-		else
-		{
-			Format(buffer, sizeof(buffer), "%s %s",Tagx[i],InformationText3[i])
-		}
+		Format(buffer, sizeof(buffer), "%t","TimerCountDown",Tag[i],InformationText3[i])
 	}
 	for (int j = 0;j<MaxClients;j++)
 	{
@@ -121,17 +95,11 @@ public Action TimerCountDown(Handle hTimer, i)
 		{
 			if(IsPlayerAlive(iClient)) 
 			{
-				if(GetEngineVersion()==Engine_CSGO)
+				switch(GetEngineVersion())
 				{
-					CGOPrintToChat(iClient,buffer);
-				}
-				if else (GetEngineVersion()==Engine_CSS)
-				{
-					CPrintToChat(iClient,buffer);
-				}
-				else 
-				{
-					PrintToChat(iClient,buffer);
+					case Engine_CSGO: CGOPrintToChat(iClient, buffer);
+					case Engine_CSS: CPrintToChat(iClient, buffer);
+					default: PrintToChat(iClient, buffer);
 				}
 			}
 		}	
@@ -146,21 +114,13 @@ public Action TimerCallback(Handle timer, Handle hndl)
 	char buffer[256];
 	if(BLOCKPLANT == 1) 
 	{
-		if(GetEngineVersion()==Engine_CSGO || GetEngineVersion()==Engine_CSS)
-		{
-			Format(buffer, sizeof(buffer), "{PURPLE}➠{DEFAULT} Плент {RED}%s {DEFAULT}заблокирован! Доступный плент{GREEN} %s",plant[1],plant[0]);
-		}
-		else Format(buffer, sizeof(buffer), "➠ Плент %s заблокирован! Доступный плент %s",plant[1],plant[0]);
+		Format(buffer, sizeof(buffer), "%t","plant_announce",plant[1],plant[0]);
 		current_plant = 1;
 	}
 	
 	else 
 	{
-		if(GetEngineVersion()==Engine_CSGO || GetEngineVersion()==Engine_CSS)
-		{
-			Format(buffer, sizeof(buffer), "{PURPLE}➠{DEFAULT} Плент {RED}%s {DEFAULT}заблокирован! Доступный плент{GREEN} %s",plant[0],plant[1]);
-		}
-		else Format(buffer, sizeof(buffer), "➠ Плент %s заблокирован! Доступный плент %s",plant[1],plant[0]);
+		Format(buffer, sizeof(buffer), "%t","plant_announce",plant[0],plant[1]);
 		current_plant = 2;
 	}
 	
@@ -170,17 +130,11 @@ public Action TimerCallback(Handle timer, Handle hndl)
 		{
 			if(IsPlayerAlive(iClient))
 			{
-				if(GetEngineVersion()==Engine_CSGO)
+				switch(GetEngineVersion())
 				{
-					CGOPrintToChat(iClient,buffer);
-				}
-				if else (GetEngineVersion()==Engine_CSS)
-				{
-					CPrintToChat(iClient,buffer);
-				}
-				else 
-				{
-					PrintToChat(iClient,buffer);
+					case Engine_CSGO: CGOPrintToChat(iClient, buffer);
+					case Engine_CSS: CPrintToChat(iClient, buffer);
+					default: PrintToChat(iClient, buffer);
 				}
 			}
 		}	
@@ -195,10 +149,24 @@ public Action OnHudUpdate(Handle hTimer)
 		{
 			if(IsPlayerAlive(i))
 			{
+				char buffer[256];
+				Format(buffer,sizeof(buffer),"%t","searching");
 				SetHudTextParams(0.45, 1.0, 1.0, 0 , 255, 0, 0, 2, 0.0 , 0.0, 0.0);
-				if(current_plant == 2) ShowHudText(i, -1, "PLANT %s",plant[1]);
-				else if(current_plant == 1) ShowHudText(i, -1, "PLANT %s",plant[0]);
-				else ShowHudText(i, -1, "SEARCHING THE PLANT...");
+				if(current_plant == 2) 
+				{
+					Format(buffer,sizeof(buffer),"%t","the_plant",plant[1]);
+					ShowHudText(i, -1, buffer);
+				}
+				else if(current_plant == 1) 
+				{
+					Format(buffer,sizeof(buffer),"%t","the_plant",plant[0]);
+					ShowHudText(i, -1, buffer);
+				}
+				else 
+				{
+					Format(buffer,sizeof(buffer),"%t","searching");
+					ShowHudText(i, -1, buffer);
+				}
 			}
 		}
 	}
@@ -221,35 +189,29 @@ public Action OnPlayerRunCmd(int iClient, int& buttons, int& impulse, float vel[
                     {
                         if(DistanceToPlants(iClient) == BLOCKPLANT)
                         {
-							if(GetEngineVersion()==Engine_CSGO)
-							{
-								if(BLOCKPLANT == 1) CGOPrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {GREEN}%s",plant[0]);
-								else CGOPrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {GREEN}%s",plant[1]);
-							}
-							else if (GetEngineVersion()==Engine_CSS)
-							{
-								if(BLOCKPLANT == 1) CPrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {GREEN}%s",plant[0]);
-								else CPrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {GREEN}%s",plant[1]);
-							}
-							else 
-							{
-								if(BLOCKPLANT == 1) PrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА %s",plant[0]);
-								else PrintToChat(iClient,"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА %s",plant[1]);
-							}
-                            if (buttons & IN_ATTACK && buttons & IN_USE)
-                            {
-                                buttons &= ~IN_ATTACK;
-                                buttons &= ~IN_USE;                                
-                            }
-                            else if(buttons & IN_ATTACK)
-                            {
-                                buttons &= ~IN_ATTACK;
-                            }
-                            else if(buttons & IN_USE)
-                            {
-                                buttons &= ~IN_USE;
-                            }                            
-                            return Plugin_Changed;
+				char buffer2[256];
+				if(BLOCKPLANT == 1) Format(buffer2,sizeof(buffer2),"%t","blocked",plant[0]);
+				else Format(buffer2,sizeof(buffer2),"%t","blocked",plant[1]);
+				switch(GetEngineVersion())
+				{
+					case Engine_CSGO: CGOPrintToChat(iClient, buffer2);
+					case Engine_CSS: CPrintToChat(iClient, buffer2);
+					default: PrintToChat(iClient, buffer2);
+				}
+				if (buttons & IN_ATTACK && buttons & IN_USE)
+				{
+					buttons &= ~IN_ATTACK;
+					buttons &= ~IN_USE;                                
+				}
+				else if(buttons & IN_ATTACK)
+				{
+					buttons &= ~IN_ATTACK;
+				}
+				else if(buttons & IN_USE)
+				{
+					buttons &= ~IN_USE;
+				}                            
+                        	return Plugin_Changed;
                         }
                     }
                 }
