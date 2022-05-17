@@ -1,0 +1,27 @@
+"Phrases"
+{
+	"TimerCountDown"
+	{
+		"#format"		"{1:s},{2:s}"
+		"ru"			"{1} {2}"
+	}
+	"plant_announce"
+	{
+		"#format"		"{1:s},{2:s}"
+		"ru"			"➠ Плент {1} заблокирован! Доступный плент {2}"
+	}
+	"blocked"
+	{
+		"#format"		"{1:s}"
+		"ru"			"ПЛЕНТ ЗАБЛОКИРОВАН, ИДИ НА {1}"
+	}
+	"searching"
+	{
+		"ru"			"SEARCHING THE PLANT..."
+	}
+	"the_plant"
+	{
+		"#format"		"{1:s}"
+		"ru"			"PLANT {1}"
+	}
+}
