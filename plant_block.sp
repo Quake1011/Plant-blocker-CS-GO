@@ -164,7 +164,6 @@ public Action OnHudUpdate(Handle hTimer)
 				}
 				else 
 				{
-					Format(buffer,sizeof(buffer),"%t","searching");
 					ShowHudText(i, -1, buffer);
 				}
 			}
